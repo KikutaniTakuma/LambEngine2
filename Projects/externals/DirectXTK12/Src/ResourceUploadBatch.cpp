@@ -230,6 +230,12 @@ namespace
             generateMipsPSO = CreateGenMipsPipelineState(device, rootSignature.Get(), GenerateMips_main, sizeof(GenerateMips_main));
         }
 
+        GenerateMipsResources(const GenerateMipsResources&) = delete;
+        GenerateMipsResources& operator=(const GenerateMipsResources&) = delete;
+
+        GenerateMipsResources(GenerateMipsResources&&) = default;
+        GenerateMipsResources& operator=(GenerateMipsResources&&) = default;
+
     private:
         static ComPtr<ID3D12RootSignature> CreateGenMipsRootSignature(
             _In_ ID3D12Device* device)
@@ -239,10 +245,10 @@ namespace
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+            #ifdef _GAMING_XBOX_SCARLETT
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+            #endif
                 | D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
 
             const CD3DX12_STATIC_SAMPLER_DESC sampler(
@@ -315,6 +321,12 @@ public:
         }
     }
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     // Call this before your multiple calls to Upload.
     void Begin(D3D12_COMMAND_LIST_TYPE commandType)
     {
@@ -362,7 +374,7 @@ public:
             numSubresources);
 
         const CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
-        auto const resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
+        const auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
 
         // Create a temporary buffer
         ComPtr<ID3D12Resource> scratchResource = nullptr;
@@ -694,7 +706,7 @@ private:
 
         SetDebugObjectName(descriptorHeap.Get(), L"ResourceUploadBatch");
 
-        auto const descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+        const auto descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 
         // Create the top-level SRV
     #if defined(_MSC_VER) || !defined(_WIN32)
@@ -935,7 +947,7 @@ private:
 
         D3D12_HEAP_DESC heapDesc = {};
     #if defined(_MSC_VER) || !defined(_WIN32)
-        auto const allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
+        const auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
     #else
         D3D12_RESOURCE_ALLOCATION_INFO allocInfo;
         std::ignore = mDevice->GetResourceAllocationInfo(&allocInfo, 0, 1, &copyDesc);
@@ -1064,8 +1076,7 @@ private:
 // Public constructor.
 ResourceUploadBatch::ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(false)
     : pImpl(std::make_unique<Impl>(device))
-{
-}
+{}
 
 
 ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&&) noexcept = default;
@@ -1123,7 +1134,7 @@ std::future<void> ResourceUploadBatch::End(_In_ ID3D12CommandQueue* commandQueue
 }
 
 
-bool __cdecl ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept
+bool ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept
 {
     return pImpl->IsSupportedForGenerateMips(format);
 }

@@ -39,6 +39,12 @@ public:
         size_t glyphCount,
         float lineSpacing) noexcept(false);
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     Glyph const* FindGlyph(wchar_t character) const;
 
     void SetDefaultCharacter(wchar_t character);
@@ -423,8 +429,7 @@ SpriteFont::SpriteFont(ID3D12Device* device, ResourceUploadBatch& upload, uint8_
 _Use_decl_annotations_
 SpriteFont::SpriteFont(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 textureSize, Glyph const* glyphs, size_t glyphCount, float lineSpacing)
     : pImpl(std::make_unique<Impl>(texture, textureSize, glyphs, glyphCount, lineSpacing))
-{
-}
+{}
 
 
 SpriteFont::SpriteFont(SpriteFont&&) noexcept = default;
@@ -515,7 +520,7 @@ XMVECTOR XM_CALLCONV SpriteFont::MeasureString(_In_z_ wchar_t const* text, bool 
         {
             UNREFERENCED_PARAMETER(advance);
 
-            auto const w = static_cast<float>(glyph->Subrect.right - glyph->Subrect.left);
+            const auto w = static_cast<float>(glyph->Subrect.right - glyph->Subrect.left);
             auto h = static_cast<float>(glyph->Subrect.bottom - glyph->Subrect.top) + glyph->YOffset;
 
             h = iswspace(wchar_t(glyph->Character)) ?
@@ -535,9 +540,9 @@ RECT SpriteFont::MeasureDrawBounds(_In_z_ wchar_t const* text, XMFLOAT2 const& p
 
     pImpl->ForEachGlyph(text, [&](Glyph const* glyph, float x, float y, float advance) noexcept
         {
-            auto const isWhitespace = iswspace(wchar_t(glyph->Character));
-            auto const w = static_cast<float>(glyph->Subrect.right - glyph->Subrect.left);
-            auto const h = isWhitespace ?
+            const auto isWhitespace = iswspace(wchar_t(glyph->Character));
+            const auto w = static_cast<float>(glyph->Subrect.right - glyph->Subrect.left);
+            const auto h = isWhitespace ?
                 pImpl->lineSpacing :
                 static_cast<float>(glyph->Subrect.bottom - glyph->Subrect.top);
 
@@ -674,3 +679,79 @@ XMUINT2 SpriteFont::GetSpriteSheetSize() const noexcept
 {
     return pImpl->textureSize;
 }
+
+
+//--------------------------------------------------------------------------------------
+// Adapters for /Zc:wchar_t- clients
+
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+
+SpriteFont::SpriteFont(
+    ID3D12Device* device,
+    ResourceUploadBatch& upload,
+    _In_z_ __wchar_t const* fileName,
+    D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorDest,
+    D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor,
+    bool forceSRGB) :
+    SpriteFont(
+        device, upload,
+        reinterpret_cast<const unsigned short*>(fileName),
+        cpuDescriptorDest, gpuDescriptor, forceSRGB)
+{}
+
+void SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, XMFLOAT2 const& position, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, float scale, SpriteEffects effects, float layerDepth) const
+{
+    DrawString(spriteBatch, reinterpret_cast<const unsigned short*>(text), XMLoadFloat2(&position), color, rotation, XMLoadFloat2(&origin), XMVectorReplicate(scale), effects, layerDepth);
+}
+
+void SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, XMFLOAT2 const& position, FXMVECTOR color, float rotation, XMFLOAT2 const& origin, XMFLOAT2 const& scale, SpriteEffects effects, float layerDepth) const
+{
+    DrawString(spriteBatch, reinterpret_cast<const unsigned short*>(text), XMLoadFloat2(&position), color, rotation, XMLoadFloat2(&origin), XMLoadFloat2(&scale), effects, layerDepth);
+}
+
+void SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, FXMVECTOR position, FXMVECTOR color, float rotation, FXMVECTOR origin, float scale, SpriteEffects effects, float layerDepth) const
+{
+    DrawString(spriteBatch, reinterpret_cast<const unsigned short*>(text), position, color, rotation, origin, XMVectorReplicate(scale), effects, layerDepth);
+}
+
+void XM_CALLCONV SpriteFont::DrawString(_In_ SpriteBatch* spriteBatch, _In_z_ __wchar_t const* text, FXMVECTOR position, FXMVECTOR color, float rotation, FXMVECTOR origin, GXMVECTOR scale, SpriteEffects effects, float layerDepth) const
+{
+    DrawString(spriteBatch, reinterpret_cast<const unsigned short*>(text), position, color, rotation, origin, scale, effects, layerDepth);
+}
+
+XMVECTOR SpriteFont::MeasureString(_In_z_ __wchar_t const* text, bool ignoreWhitespace) const
+{
+    return MeasureString(reinterpret_cast<const unsigned short*>(text), ignoreWhitespace);
+}
+
+RECT SpriteFont::MeasureDrawBounds(_In_z_ __wchar_t const* text, XMFLOAT2 const& position, bool ignoreWhitespace) const
+{
+    return MeasureDrawBounds(reinterpret_cast<const unsigned short*>(text), position, ignoreWhitespace);
+}
+
+RECT SpriteFont::MeasureDrawBounds(_In_z_ __wchar_t const* text, FXMVECTOR position, bool ignoreWhitespace) const
+{
+    XMFLOAT2 pos;
+    XMStoreFloat2(&pos, position);
+
+    return MeasureDrawBounds(reinterpret_cast<const unsigned short*>(text), pos, ignoreWhitespace);
+}
+
+// Can't do this for GetDefaultCharacter since it only differs by return type.
+
+void SpriteFont::SetDefaultCharacter(__wchar_t character)
+{
+    pImpl->SetDefaultCharacter(static_cast<unsigned short>(character));
+}
+
+bool SpriteFont::ContainsCharacter(__wchar_t character) const
+{
+    return ContainsCharacter(static_cast<unsigned short>(character));
+}
+
+SpriteFont::Glyph const* SpriteFont::FindGlyph(__wchar_t character) const
+{
+    return pImpl->FindGlyph(static_cast<unsigned short>(character));
+}
+
+#endif // !_NATIVE_WCHAR_T_DEFINED

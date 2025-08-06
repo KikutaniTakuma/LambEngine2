@@ -24,6 +24,12 @@ class PrimitiveBatchBase::Impl
 public:
     Impl(_In_ ID3D12Device* device, size_t maxIndices, size_t maxVertices, size_t vertexSize);
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     void Begin(_In_ ID3D12GraphicsCommandList* cmdList);
     void End();
 
@@ -178,9 +184,11 @@ void PrimitiveBatchBase::Impl::Draw(D3D_PRIMITIVE_TOPOLOGY topology, bool isInde
 
         // Allocate a page for the primitive data
         if (isIndexed)
-            mIndexSegment = GraphicsMemory::Get(mDevice.Get()).Allocate(mIndexPageSize);
+        {
+            mIndexSegment = GraphicsMemory::Get(mDevice.Get()).Allocate(mIndexPageSize, 16, GraphicsMemory::TAG_INDEX);
+        }
 
-        mVertexSegment = GraphicsMemory::Get(mDevice.Get()).Allocate(mVertexPageSize);
+        mVertexSegment = GraphicsMemory::Get(mDevice.Get()).Allocate(mVertexPageSize, 16, GraphicsMemory::TAG_VERTEX);
     }
 
     // Copy over the index data.
@@ -244,8 +252,7 @@ void PrimitiveBatchBase::Impl::FlushBatch()
 // Public constructor.
 PrimitiveBatchBase::PrimitiveBatchBase(_In_ ID3D12Device* device, size_t maxIndices, size_t maxVertices, size_t vertexSize)
     : pImpl(std::make_unique<Impl>(device, maxIndices, maxVertices, vertexSize))
-{
-}
+{}
 
 
 PrimitiveBatchBase::PrimitiveBatchBase(PrimitiveBatchBase&&) noexcept = default;

@@ -40,13 +40,11 @@ ModelMeshPart::ModelMeshPart(uint32_t ipartIndex) noexcept :
     vertexBufferSize(0),
     primitiveType(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
     indexFormat(DXGI_FORMAT_R16_UINT)
-{
-}
+{}
 
 
 ModelMeshPart::~ModelMeshPart()
-{
-}
+{}
 
 
 _Use_decl_annotations_
@@ -179,45 +177,43 @@ void ModelMeshPart::DrawMeshParts(
 
 ModelMesh::ModelMesh() noexcept :
     boneIndex(ModelBone::c_Invalid)
-{
-}
+{}
 
 
 ModelMesh::~ModelMesh()
-{
-}
+{}
 
 // Draw the mesh
-void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) const
+void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts);
 }
 
-void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList) const
+void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts);
 }
 
 
 // Draw the mesh with an effect
-void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
+void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, effect);
 }
 
-void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
+void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, effect);
 }
 
 
 // Draw the mesh with a callback for each mesh part
-void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
+void ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, callback);
 }
 
-void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
+void ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, callback);
 }
@@ -228,12 +224,10 @@ void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, M
 //--------------------------------------------------------------------------------------
 
 Model::Model() noexcept
-{
-}
+{}
 
 Model::~Model()
-{
-}
+{}
 
 Model::Model(Model const& other) :
     meshes(other.meshes),
@@ -352,7 +346,7 @@ void Model::LoadStaticBuffers(
 
             part->vertexBufferSize = static_cast<uint32_t>(part->vertexBuffer.Size());
 
-            auto const desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
+            const auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->vertexBuffer.Size());
 
             ThrowIfFailed(device->CreateCommittedResource(
                 &heapProperties,
@@ -408,7 +402,7 @@ void Model::LoadStaticBuffers(
 
             part->indexBufferSize = static_cast<uint32_t>(part->indexBuffer.Size());
 
-            auto const desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
+            const auto desc = CD3DX12_RESOURCE_DESC::Buffer(part->indexBuffer.Size());
 
             ThrowIfFailed(device->CreateCommittedResource(
                 &heapProperties,
@@ -830,3 +824,21 @@ void Model::Transition(
         commandList->ResourceBarrier(count, barrier);
     }
 }
+
+
+//--------------------------------------------------------------------------------------
+// Adapters for /Zc:wchar_t- clients
+
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+
+_Use_decl_annotations_
+std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
+    ID3D12Device* device,
+    ResourceUploadBatch& resourceUploadBatch,
+    const __wchar_t* texturesPath,
+    D3D12_DESCRIPTOR_HEAP_FLAGS flags) const
+{
+    return LoadTextures(device, resourceUploadBatch, reinterpret_cast<const unsigned short*>(texturesPath), flags);
+}
+
+#endif

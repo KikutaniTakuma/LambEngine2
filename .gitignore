@@ -360,7 +360,10 @@ MigrationBackup/
 FodyWeavers.xsd
 
 fxc.exe
+Projects/externals/DirectXMesh/Bin/
 Projects/externals/DirectXTex/Shaders/Compiled/
+Projects/externals/DirectXTK12/Src/Shaders/Compiled/
+Projects/externals/DirectXTK12/Bin/
 imgui.ini
 Generated
 Projects/Game/KyokoGlobalVariables/aaDontTouchPlayData*.json

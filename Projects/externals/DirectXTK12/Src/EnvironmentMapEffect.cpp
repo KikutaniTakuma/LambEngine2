@@ -63,6 +63,12 @@ public:
         const EffectPipelineStateDescription& pipelineDescription,
         EnvironmentMapEffect::Mapping mapping);
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     enum RootParameterIndex
     {
         TextureSRV,
@@ -374,10 +380,10 @@ EnvironmentMapEffect::Impl::Impl(
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
-#ifdef _GAMING_XBOX_SCARLETT
+        #ifdef _GAMING_XBOX_SCARLETT
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS
             | D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS
-#endif
+        #endif
             ;
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
@@ -558,8 +564,7 @@ EnvironmentMapEffect::EnvironmentMapEffect(
     const EffectPipelineStateDescription& pipelineDescription,
     EnvironmentMapEffect::Mapping mapping)
     : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, mapping))
-{
-}
+{}
 
 
 EnvironmentMapEffect::EnvironmentMapEffect(EnvironmentMapEffect&&) noexcept = default;

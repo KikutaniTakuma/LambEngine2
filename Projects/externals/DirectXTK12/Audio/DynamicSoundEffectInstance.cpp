@@ -130,8 +130,7 @@ public:
     }
 
     void __cdecl OnDestroyParent() noexcept override
-    {
-    }
+    {}
 
     SoundEffectInstanceBase                             mBase;
 
@@ -214,6 +213,7 @@ void DynamicSoundEffectInstance::Impl::OnUpdate()
     const DWORD result = WaitForSingleObjectEx(mBufferEvent.get(), 0, FALSE);
     switch (result)
     {
+    default:
     case WAIT_TIMEOUT:
         break;
 
@@ -236,7 +236,9 @@ void DynamicSoundEffectInstance::Impl::OnUpdate()
 // DynamicSoundEffectInstance
 //--------------------------------------------------------------------------------------
 
+#ifdef _MSC_VER
 #pragma warning( disable : 4355 )
+#endif
 
 // Public constructors
 _Use_decl_annotations_
@@ -248,8 +250,7 @@ DynamicSoundEffectInstance::DynamicSoundEffectInstance(
     int sampleBits,
     SOUND_EFFECT_INSTANCE_FLAGS flags) :
     pImpl(std::make_unique<Impl>(engine, this, bufferNeeded, sampleRate, channels, sampleBits, flags))
-{
-}
+{}
 
 
 DynamicSoundEffectInstance::DynamicSoundEffectInstance(DynamicSoundEffectInstance&&) noexcept = default;

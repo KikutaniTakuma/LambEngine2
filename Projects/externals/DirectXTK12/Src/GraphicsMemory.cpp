@@ -12,6 +12,11 @@
 #include "PlatformHelpers.h"
 #include "LinearAllocator.h"
 
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+#include <pix3.h>
+#include <pixmemory.h>
+#endif
+
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 using ScopedLock = std::lock_guard<std::mutex>;
@@ -214,6 +219,10 @@ namespace
         std::array<std::unique_ptr<LinearAllocator>, AllocatorPoolCount> mPools;
         mutable std::mutex mMutex;
     };
+
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+    constexpr uint16_t c_PIXAllocatorID = 1001;
+#endif
 } // anonymous namespace
 
 
@@ -237,6 +246,10 @@ public:
         }
 
         s_graphicsMemory = this;
+
+    #endif
+    #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+        DebugTrace("INFO: GraphicsMemory PIX custom memory tracking events enabled (Allocator ID %u)\n", c_PIXAllocatorID);
     #endif
     }
 
@@ -372,7 +385,7 @@ GraphicsMemory& GraphicsMemory::operator= (GraphicsMemory&& moveFrom) noexcept
 GraphicsMemory::~GraphicsMemory() = default;
 
 
-GraphicsResource GraphicsMemory::Allocate(size_t size, size_t alignment)
+GraphicsResource GraphicsMemory::AllocateImpl(size_t size, size_t alignment)
 {
     assert(alignment >= 4); // Should use at least DWORD alignment
     return pImpl->Allocate(size, alignment);
@@ -436,6 +449,15 @@ GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device* device)
 }
 #endif
 
+#ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+__declspec(allocator)
+void* GraphicsMemory::ReportCustomMemoryAlloc(void* pMem, size_t size, UINT64 metadata)
+{
+    PIXRecordMemoryAllocationEvent(c_PIXAllocatorID, pMem, size, metadata);
+    return pMem;
+}
+#endif
+
 
 //--------------------------------------------------------------------------------------
 // GraphicsResource smart-pointer interface
@@ -448,8 +470,7 @@ GraphicsResource::GraphicsResource() noexcept
     , mMemory(nullptr)
     , mBufferOffset(0)
     , mSize(0)
-{
-}
+{}
 
 GraphicsResource::GraphicsResource(
     _In_ LinearAllocatorPage* page,
@@ -484,6 +505,10 @@ GraphicsResource::~GraphicsResource()
 {
     if (mPage)
     {
+    #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+        PIXRecordMemoryFreeEvent(c_PIXAllocatorID, reinterpret_cast<void*>(mGpuAddress), mSize, 0);
+    #endif
+
         mPage->Release();
         mPage = nullptr;
     }
@@ -499,6 +524,10 @@ void GraphicsResource::Reset() noexcept
 {
     if (mPage)
     {
+    #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+        PIXRecordMemoryFreeEvent(c_PIXAllocatorID, reinterpret_cast<void*>(mGpuAddress), mSize, 0);
+    #endif
+
         mPage->Release();
         mPage = nullptr;
     }
@@ -514,6 +543,10 @@ void GraphicsResource::Reset(GraphicsResource&& alloc) noexcept
 {
     if (mPage)
     {
+    #ifdef USING_PIX_CUSTOM_MEMORY_EVENTS
+        PIXRecordMemoryFreeEvent(c_PIXAllocatorID, reinterpret_cast<void*>(mGpuAddress), mSize, 0);
+    #endif
+
         mPage->Release();
         mPage = nullptr;
     }
@@ -540,27 +573,22 @@ void GraphicsResource::Reset(GraphicsResource&& alloc) noexcept
 
 SharedGraphicsResource::SharedGraphicsResource() noexcept
     : mSharedResource(nullptr)
-{
-}
+{}
 
 SharedGraphicsResource::SharedGraphicsResource(GraphicsResource&& resource) noexcept(false)
     : mSharedResource(std::make_shared<GraphicsResource>(std::move(resource)))
-{
-}
+{}
 
 SharedGraphicsResource::SharedGraphicsResource(SharedGraphicsResource&& resource) noexcept
     : mSharedResource(std::move(resource.mSharedResource))
-{
-}
+{}
 
 SharedGraphicsResource::SharedGraphicsResource(const SharedGraphicsResource& resource) noexcept
     : mSharedResource(resource.mSharedResource)
-{
-}
+{}
 
 SharedGraphicsResource::~SharedGraphicsResource()
-{
-}
+{}
 
 SharedGraphicsResource&& SharedGraphicsResource::operator= (SharedGraphicsResource&& resource) noexcept
 {

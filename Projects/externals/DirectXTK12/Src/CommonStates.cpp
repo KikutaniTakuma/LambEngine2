@@ -464,6 +464,12 @@ public:
         }
     }
 
+    Impl(const Impl&) = delete;
+    Impl& operator=(const Impl&) = delete;
+
+    Impl(Impl&&) = default;
+    Impl& operator=(Impl&&) = default;
+
     D3D12_GPU_DESCRIPTOR_HANDLE Get(SamplerIndex i) const
     {
         return mDescriptors.GetGpuHandle(static_cast<size_t>(i));
@@ -564,8 +570,7 @@ const D3D12_SAMPLER_DESC CommonStates::Impl::SamplerDescs[] =
 _Use_decl_annotations_
 CommonStates::CommonStates(ID3D12Device* device) :
     pImpl(std::make_unique<Impl>(device))
-{
-}
+{}
 
 CommonStates::CommonStates(CommonStates&&) noexcept = default;
 CommonStates& CommonStates::operator = (CommonStates&&) noexcept = default;
