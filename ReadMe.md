@@ -9,7 +9,7 @@
 
 
 ## 使用している外部ライブラリ
-* [ImGui](https://github.com/ocornut/imgui/releases/tag/v1.92.1)
+* [ImGui](https://github.com/ocornut/imgui/releases/tag/v1.92.1-docking)
 * [nlohmann/json](https://github.com/nlohmann/json/releases/tag/v3.12.0)
 * [assimp](https://github.com/assimp/assimp/releases/tag/v6.0.2)
 * [DirectXMesh](https://github.com/microsoft/DirectXMesh/releases/tag/jul2025)
