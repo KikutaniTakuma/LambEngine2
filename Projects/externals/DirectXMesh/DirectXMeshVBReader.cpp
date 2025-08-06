@@ -65,7 +65,8 @@ public:
         mBuffers{},
         mVerts{},
         mDefaultStrides{},
-        mTempSize(0) {}
+        mTempSize(0)
+    {}
 
     Impl(const Impl&) = delete;
     Impl& operator=(const Impl&) = delete;
@@ -452,7 +453,7 @@ HRESULT VBReader::Impl::Read(XMVECTOR* buffer, const char* semanticName, unsigne
         {
             if ((ptr + sizeof(uint16_t)) > eptr)
                 return E_UNEXPECTED;
-            auto const i = *reinterpret_cast<const uint16_t*>(ptr);
+            const auto i = *reinterpret_cast<const uint16_t*>(ptr);
             float f = static_cast<float>(i) / 65535.f;
             if (x2bias)
             {
@@ -469,7 +470,7 @@ HRESULT VBReader::Impl::Read(XMVECTOR* buffer, const char* semanticName, unsigne
         {
             if ((ptr + sizeof(uint16_t)) > eptr)
                 return E_UNEXPECTED;
-            auto const i = *reinterpret_cast<const uint16_t*>(ptr);
+            const auto i = *reinterpret_cast<const uint16_t*>(ptr);
             *buffer++ = XMVectorSet(static_cast<float>(i), 0.f, 0.f, 0.f);
             ptr += stride;
         }
@@ -480,7 +481,7 @@ HRESULT VBReader::Impl::Read(XMVECTOR* buffer, const char* semanticName, unsigne
         {
             if ((ptr + sizeof(int16_t)) > eptr)
                 return E_UNEXPECTED;
-            auto const i = *reinterpret_cast<const int16_t*>(ptr);
+            const auto i = *reinterpret_cast<const int16_t*>(ptr);
             *buffer++ = XMVectorSet(static_cast<float>(i) / 32767.f, 0.f, 0.f, 0.f);
             ptr += stride;
         }
@@ -491,7 +492,7 @@ HRESULT VBReader::Impl::Read(XMVECTOR* buffer, const char* semanticName, unsigne
         {
             if ((ptr + sizeof(int16_t)) > eptr)
                 return E_UNEXPECTED;
-            auto const i = *reinterpret_cast<const int16_t*>(ptr);
+            const auto i = *reinterpret_cast<const int16_t*>(ptr);
             *buffer++ = XMVectorSet(static_cast<float>(i), 0.f, 0.f, 0.f);
             ptr += stride;
         }
@@ -530,7 +531,7 @@ HRESULT VBReader::Impl::Read(XMVECTOR* buffer, const char* semanticName, unsigne
         {
             if ((ptr + sizeof(int8_t)) > eptr)
                 return E_UNEXPECTED;
-            auto const i = *reinterpret_cast<const int8_t*>(ptr);
+            const auto i = *reinterpret_cast<const int8_t*>(ptr);
             *buffer++ = XMVectorSet(static_cast<float>(i) / 127.f, 0.f, 0.f, 0.f);
             ptr += stride;
         }
@@ -541,7 +542,7 @@ HRESULT VBReader::Impl::Read(XMVECTOR* buffer, const char* semanticName, unsigne
         {
             if ((ptr + sizeof(int8_t)) > eptr)
                 return E_UNEXPECTED;
-            auto const i = *reinterpret_cast<const int8_t*>(ptr);
+            const auto i = *reinterpret_cast<const int8_t*>(ptr);
             *buffer++ = XMVectorSet(static_cast<float>(i), 0.f, 0.f, 0.f);
             ptr += stride;
         }
@@ -657,8 +658,7 @@ HRESULT VBReader::Impl::Read(XMVECTOR* buffer, const char* semanticName, unsigne
 // Public constructor.
 VBReader::VBReader() noexcept(false)
     : pImpl(std::make_unique<Impl>())
-{
-}
+{}
 
 VBReader::VBReader(VBReader&&) noexcept = default;
 VBReader& VBReader::operator= (VBReader&&) noexcept = default;
