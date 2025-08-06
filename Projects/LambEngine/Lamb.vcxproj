@@ -186,7 +186,40 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Math\Mat4x4.cpp" />
+    <ClCompile Include="Math\MathCommon.cpp" />
+    <ClCompile Include="Math\Quaternion.cpp" />
+    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Math\Vector3.cpp" />
+    <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="Utils\ConvertString.cpp" />
+    <ClCompile Include="Utils\Easing.cpp" />
+    <ClCompile Include="Utils\Log.cpp" />
+    <ClCompile Include="Utils\FileUtils.cpp" />
+    <ClCompile Include="Utils\Flg.cpp" />
+    <ClCompile Include="Utils\PerlinNoise.cpp" />
+    <ClCompile Include="Utils\Random.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Math\MathCommon.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\Quaternion.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Math\Vector3.h" />
+    <ClInclude Include="Math\Vector4.h" />
+    <ClInclude Include="Utils\Concepts.h" />
+    <ClInclude Include="Utils\ConvertString.h" />
+    <ClInclude Include="Utils\CreateHash.h" />
+    <ClInclude Include="Utils\Easing.h" />
+    <ClInclude Include="Utils\Error.h" />
+    <ClInclude Include="Utils\Log.h" />
+    <ClInclude Include="Utils\FileUtils.h" />
+    <ClInclude Include="Utils\Flg.h" />
+    <ClInclude Include="Utils\HSV.h" />
+    <ClInclude Include="Utils\PerlinNoise.h" />
+    <ClInclude Include="Utils\Random.h" />
+    <ClInclude Include="Utils\SafeDelete.h" />
+    <ClInclude Include="Utils\SafePtr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

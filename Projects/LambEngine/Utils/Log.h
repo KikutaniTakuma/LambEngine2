@@ -1,0 +1,77 @@
+#pragma once
+#include <string>
+#include <format>
+#include "Utils/Concepts.h"
+#include <chrono>
+
+#include <Windows.h>
+#undef max
+#undef min
+
+class Vector2;
+class Vector3;
+class Vector4;
+class Quaternion;
+
+
+/// <summary>
+/// ログ関連
+/// </summary>
+namespace Lamb {
+	/// <summary>
+	/// 時間を文字列に変換する
+	/// </summary>
+	/// <param name="millisecond">ミリ秒</param>
+	/// <returns>文字列</returns>
+	std::string TimeToString(std::chrono::milliseconds millisecond);
+
+	/// <summary>
+	/// デバッグ時にVSの出力にデバッグログを出す
+	/// </summary>
+	/// <param name="text">ログテキスト</param>
+	void DebugLog(const std::string& text);
+
+	/// <summary>
+	/// デバッグ時にVSの出力にデバッグログを出す
+	/// </summary>
+	/// <param name="text">ログテキスト</param>
+	/// <param name="vec">vector</param>
+	void DebugLog(const std::string& text, const Vector2& vec);
+
+	/// <summary>
+	/// デバッグ時にVSの出力にデバッグログを出す
+	/// </summary>
+	/// <param name="text">ログテキスト</param>
+	/// <param name="vec">vector</param>
+	void DebugLog(const std::string& text, const Vector3& vec);
+
+	/// <summary>
+	/// デバッグ時にVSの出力にデバッグログを出す
+	/// </summary>
+	/// <param name="text">ログテキスト</param>
+	/// <param name="vec">vector</param>
+	void DebugLog(const std::string& text, const Vector4& vec);
+
+	/// <summary>
+	/// デバッグ時にVSの出力にデバッグログを出す
+	/// </summary>
+	/// <param name="text">ログテキスト</param>
+	/// <param name="vec">quaternion</param>
+	void DebugLog(const std::string& text, const Quaternion& quaternion);
+
+	/// <summary>
+	/// デバッグ時にVSの出力にデバッグログを出す
+	/// </summary>
+	/// <param name="text">ログテキスト</param>
+	/// <param name="vec">vector</param>
+	template<Lamb::IsNumber T>
+	void DebugLog(const std::string& text, const T& number) {
+		OutputDebugStringA((text + std::string{ " : " } + std::format("{}", number) + "\n").c_str());
+	}
+
+	/// <summary>
+	/// 今の時間を文字列として出力する
+	/// </summary>
+	/// <returns>今の時間(jst)</returns>
+	std::string NowTime();
+}
