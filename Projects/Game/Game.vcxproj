@@ -189,10 +189,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\main.cpp" />
-    <ClCompile Include="Src\World\World.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Src\World\World.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LambEngine\Lamb.vcxproj">
