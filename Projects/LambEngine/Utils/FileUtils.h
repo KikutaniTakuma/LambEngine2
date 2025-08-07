@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <filesystem>
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 
 /// <summary>
 /// ファイル関係の関数やクラス
@@ -31,6 +31,13 @@ namespace Lamb {
 	/// <param name="fileName">読み込むファイルの名前</param>
 	/// <returns>解凍したjsonファイル</returns>
 	nlohmann::json LoadJson(const std::filesystem::path& fileName);
+
+	/// <summary>
+	/// json型にしたデータをファイル出力して保存する
+	/// </summary>
+	/// <param name="fileName">ファイルパス</param>
+	/// <param name="json">jsonデータ型</param>
+	void SaveJson(const std::filesystem::path& fileName, const nlohmann::json& json);
 
 	/// <summary>
 	/// 開くファイルをダイアログを開いて選択する

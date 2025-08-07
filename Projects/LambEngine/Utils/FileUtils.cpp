@@ -101,6 +101,14 @@ namespace Lamb {
 		return result;
 	}
 
+	void SaveJson(const std::filesystem::path& fileName, const nlohmann::json& json) {
+		std::ofstream outputFile(fileName);
+
+		outputFile << std::setw(4) << json << std::endl;
+
+		outputFile.close();
+	}
+
 	std::wstring ShowSaveFileDialog()
 	{
 		wchar_t filename[MAX_PATH] = L"";

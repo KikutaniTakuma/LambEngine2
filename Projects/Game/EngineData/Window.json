@@ -1,0 +1,8 @@
+{
+    "Lamb::WindowStartUpData":{
+        "windowTitle": "LambEngine2",
+        "width": 1280,
+        "height": 720,
+        "isFullscreen": false
+    }
+}

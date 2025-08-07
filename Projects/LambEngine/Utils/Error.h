@@ -4,9 +4,8 @@
 
 
 #pragma once
-#include <string>
 #include <filesystem>
-#include <typeinfo>
+#include "ObjectNameToString.h"
 
 namespace Lamb {
 	class Error {
@@ -86,7 +85,7 @@ namespace Lamb {
 			err = Error{};
 
 			err.errorCode_ = errorCode;
-			err.className_ = typeid(T).name();
+			err.className_ = ToString<T>();
 			err.functionName_ = functionName + "()";
 			err.sourceFileName_ = sourceFileName;
 			err.codeLineNumber_ = std::to_string(codeLineNumber);

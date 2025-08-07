@@ -17,6 +17,7 @@ namespace Lamb {
 	class SafePtr {
 	public:
 		using type = T;
+		using pointer_type = T*;
 
 	public:
 		SafePtr():
@@ -50,7 +51,12 @@ namespace Lamb {
 			return *this;
 		}
 
+
 	public:
+		explicit operator T*() const {
+			return ptr_;
+		}
+
 		explicit operator bool() const {
 			return !!ptr_;
 		}

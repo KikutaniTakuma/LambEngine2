@@ -186,6 +186,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Window\WindowFactory.cpp" />
+    <ClCompile Include="Framework\Framework.cpp" />
+    <ClCompile Include="Input\Gamepad\Gamepad.cpp" />
+    <ClCompile Include="Input\Input.cpp" />
+    <ClCompile Include="Input\KeyInput\KeyInput.cpp" />
+    <ClCompile Include="Input\Mouse\Mouse.cpp" />
     <ClCompile Include="Math\Mat4x4.cpp" />
     <ClCompile Include="Math\MathCommon.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
@@ -201,6 +207,14 @@
     <ClCompile Include="Utils\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Window\WindowFactory.h" />
+    <ClInclude Include="Data\Data.h" />
+    <ClInclude Include="Data\WindowStartUpData.h" />
+    <ClInclude Include="Framework\Framework.h" />
+    <ClInclude Include="Input\Gamepad\Gamepad.h" />
+    <ClInclude Include="Input\Input.h" />
+    <ClInclude Include="Input\KeyInput\KeyInput.h" />
+    <ClInclude Include="Input\Mouse\Mouse.h" />
     <ClInclude Include="Math\MathCommon.h" />
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Quaternion.h" />
@@ -212,10 +226,12 @@
     <ClInclude Include="Utils\CreateHash.h" />
     <ClInclude Include="Utils\Easing.h" />
     <ClInclude Include="Utils\Error.h" />
+    <ClInclude Include="Utils\LambPtr.h" />
     <ClInclude Include="Utils\Log.h" />
     <ClInclude Include="Utils\FileUtils.h" />
     <ClInclude Include="Utils\Flg.h" />
     <ClInclude Include="Utils\HSV.h" />
+    <ClInclude Include="Utils\ObjectNameToString.h" />
     <ClInclude Include="Utils\PerlinNoise.h" />
     <ClInclude Include="Utils\Random.h" />
     <ClInclude Include="Utils\SafeDelete.h" />
