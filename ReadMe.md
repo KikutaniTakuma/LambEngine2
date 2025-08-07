@@ -1,6 +1,7 @@
 # LambEngine2
-## v0.1.0
-* 外部ライブラリの最新版導入
+## v0.2.0
+* Window表示
+* Windowの表示データの読み込み
 
 ## BuildStatus
 * [![DebugBuild](https://github.com/KikutaniTakuma/LambEngine2/actions/workflows/DebugBuild.yml/badge.svg)](https://github.com/KikutaniTakuma/LambEngine2/actions/workflows/DebugBuild.yml)
